@@ -1,1 +1,1 @@
-# sleep
+# sleep - sleep for a specified number of seconds
