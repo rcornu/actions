@@ -1,1 +1,1 @@
-# wait - wait until a network connection (TCP or UDP) is open
+# slack - send message to Slack app
