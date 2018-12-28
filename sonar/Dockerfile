@@ -1,22 +1,25 @@
-FROM openjdk:8-jre-alpine
+FROM openjdk:8-alpine
 
 LABEL "maintainer"="rcornu <contact@romaincornu.com>"
-LABEL "name"="sonar"
+LABEL "name"="GitHub Actions for SonarQube (scanner)"
 LABEL "version"="latest"
 
 LABEL "com.github.actions.color"="blue"
-LABEL "com.github.actions.description"="GitHub Actions for SonarQube (runner)"
+LABEL "com.github.actions.description"="GitHub Actions for SonarQube (scanner)"
 LABEL "com.github.actions.icon"="box"
-LABEL "com.github.actions.name"="wait"
+LABEL "com.github.actions.name"="GitHub Actions for SonarQube (scanner)"
 
-ENV SONAR_RUNNER_VERSION=2.4
+ENV SONAR_SCANNER_VERSION=3.2.0.1227-linux
+ENV SONAR_RUNNER_HOME=/sonar-scanner-$SONAR_SCANNER_VERSION
+ENV PATH $PATH:$SONAR_RUNNER_HOME/bin
 
-RUN cd /tmp && \
-    wget http://repo1.maven.org/maven2/org/codehaus/sonar/runner/sonar-runner-dist/${SONAR_RUNNER_VERSION}/sonar-runner-dist-${SONAR_RUNNER_VERSION}.zip && \
-    unzip sonar-runner-dist-${SONAR_RUNNER_VERSION}.zip && \
-    cp -r /tmp/sonar-runner-${SONAR_RUNNER_VERSION}/* / && \
-    cp -r /tmp/sonar-runner-${SONAR_RUNNER_VERSION}/.* / && \
-    rm -rf /tmp/*
+RUN apk add --update curl unzip
+
+RUN curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}.zip \
+        -o ./sonarscanner.zip && \
+    unzip ./sonarscanner.zip && \
+    rm ./sonarscanner.zip && \
+    sed -i 's/use_embedded_jre=true/use_embedded_jre=false/g' $SONAR_RUNNER_HOME/bin/sonar-scanner
 
 COPY README.md /
 COPY entrypoint.sh /entrypoint.sh

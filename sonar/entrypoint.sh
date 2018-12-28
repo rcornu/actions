@@ -2,5 +2,5 @@
 
 set -e
 
-output=$( sh -c "/bin/sonar-runner $*" )
+output=$( sh -c "sonar-scanner $*" )
 echo "$output"
