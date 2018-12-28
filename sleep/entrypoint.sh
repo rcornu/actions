@@ -2,11 +2,15 @@
 
 set -e
 
-if [ "$*" == '' ]
-then
-    seconds=5;
-    echo "WARNING: no argument found, default value is $seconds seconds";
-    sleep $seconds
+log () {
+    echo "$1: $2"
+    if [ "$1" == 'ERROR' ]; then
+        exit 1
+    fi
+}
+
+if [ "$*" == '' ]; then
+    log 'ERROR' 'No argument found'
 else
     sleep "$*"
 fi
