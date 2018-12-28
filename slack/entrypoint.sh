@@ -2,14 +2,38 @@
 
 set -e
 
-[ -z "$CHANNEL" ]       && { CHANNEL="general"; echo "WARNING: CHANNEL is undefined, default is $CHANNEL"; }
-[ -z "$ICON_EMOJI" ]    && { ICON_EMOJI=":octocat:"; echo "WARNING: ICON_EMOJI is undefined, default is $ICON_EMOJI"; }
-[ -z "$USERNAME" ]      && { USERNAME="Github"; echo "WARNING: USERNAME is undefined, default is $USERNAME"; }
-[ -z "$WEBHOOK_URL" ]   && { echo "ERROR: WEBHOOK_URL is undefined"; exit 1; }
+log () {
+    echo "$1: $2"
+    if [ "$1" == 'ERROR' ]; then
+        exit 1
+    fi
+}
 
-if [ "$*" == '' ]
-then
-    echo "ERROR: no argument found";
+if [ -z "$CHANNEL" ]; then
+    CHANNEL="general"
+    log 'WARNING' "CHANNEL is undefined, defaults to $CHANNEL"
+fi
+
+if [ -z "$ICON" ]; then
+    ICON=":octocat:"
+    log 'WARNING' "ICON is undefined, defaults to $ICON"
+fi
+
+if [ -z "$USERNAME" ]; then
+    USERNAME='Github'
+    log 'WARNING' "USERNAME is undefined, defaults to $USERNAME"
+fi
+
+if [ -z "$WEBHOOK_URL" ]; then
+    log 'ERROR' 'WEBHOOK_URL is undefined'
+fi
+
+if [ "$*" == '' ]; then
+    log 'ERROR' 'No argument found'
 else
-    curl -X POST -H 'Content-type: application/json' --data "{'channel':'$CHANNEL','icon_emoji':'$ICON_EMOJI','text':'$*','username':'$USERNAME'}" $WEBHOOK_URL
+    curl \
+    -X POST \
+    -H 'Content-type: application/json' \
+    --data "{'channel':'$CHANNEL','icon_emoji':'$ICON','text':'$*','username':'$USERNAME'}" \
+    $WEBHOOK_URL
 fi
